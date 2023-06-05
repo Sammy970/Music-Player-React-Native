@@ -3,25 +3,50 @@ import React from 'react'
 import { Entypo } from '@expo/vector-icons';
 import color from '../misc/color'
 
-const AudioListItem = () => {
+const getThumbnailText = (filename) => filename[0];
+
+const convertTime = minutes => {
+    if (minutes) {
+        const hrs = minutes / 60;
+        const minute = hrs.toString().split('.')[0];
+        const percent = parseInt(hrs.toString().split('.')[1].slice(0, 2));
+        const sec = Math.ceil((60 * percent) / 100);
+
+        if (parseInt(minute) < 10 && sec < 10) {
+            return `0${minute}:0${sec}`;
+        }
+
+        if (parseInt(minute) < 10) {
+            return `0${minute}:${sec}`;
+        }
+
+        if (sec < 10) {
+            return `${minute}:0${sec}`;
+        }
+
+        return `${minute}:${sec}`;
+    }
+};
+
+const AudioListItem = ({ title, duration, onOptionPress }) => {
     return (
         <>
             <View style={styles.container}>
                 <View style={styles.leftContainer}>
                     <View style={styles.thumbnail}>
-                        <Text style={styles.thumbnailText}>A</Text>
+                        <Text style={styles.thumbnailText}>{getThumbnailText(title)}</Text>
                     </View>
                     <View style={styles.titleContainer}>
-                        <Text numberOfLines={1} style={styles.title}>
-                            This will be some long ass song title you know
-                        </Text>
-                        <Text style={styles.timeText}>
-                            3:59
-                        </Text>
+                        <Text numberOfLines={1} style={styles.title}>{title}</Text>
+                        <Text style={styles.timeText}>{convertTime(duration)}</Text>
                     </View>
                 </View>
                 <View style={styles.rightContainer}>
-                    <Entypo name="dots-three-vertical" size={20} color={color.FONT_MEDIUM} />
+                    <Entypo
+                        onPress={onOptionPress}
+                        name="dots-three-vertical"
+                        size={20}
+                        color={color.FONT_MEDIUM} />
                 </View>
             </View>
 

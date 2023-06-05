@@ -9,13 +9,10 @@ import AudioListItem from './app/components/AudioListItem';
 
 export default function App() {
   return (
-    // <AudioProvider>
-    //   <NavigationContainer>
-    //     <AppNavigator />
-    //   </NavigationContainer>
-    // </AudioProvider>
-    <View style={{ marginTop: 50 }}>
-      <AudioListItem />
-    </View>
+    <AudioProvider>
+      <NavigationContainer>
+        <AppNavigator />
+      </NavigationContainer>
+    </AudioProvider>
   );
 }
