@@ -4,10 +4,20 @@ import { AudioContext } from '../context/AudioProvider'
 import { RecyclerListView, LayoutProvider } from 'recyclerlistview'
 import AudioListItem from '../components/AudioListItem'
 import Screen from '../components/Screen'
+import OptionModal from '../components/OptionModal'
 
 export class AudioList extends Component {
 
-    static contextType = AudioContext
+    static contextType = AudioContext;
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            optionModalVisible: false
+        }
+
+        this.currentItem = {}
+    }
 
     layoutProvider = new LayoutProvider((i) => 'audio', (type, dim) => {
         switch (type) {
@@ -28,8 +38,10 @@ export class AudioList extends Component {
             <AudioListItem
                 title={item.filename}
                 duration={item.duration}
-                onOptionPress={() =>
-                    console.log("Opening Options")}
+                onOptionPress={() => {
+                    this.currentItem = item;
+                    this.setState({ ...this.state, optionModalVisible: true });
+                }}
             />
         )
     }
@@ -44,6 +56,13 @@ export class AudioList extends Component {
                                 dataProvider={dataProvider}
                                 layoutProvider={this.layoutProvider}
                                 rowRenderer={this.rowRenderer}
+                            />
+                            <OptionModal
+                                currentItem={this.currentItem}
+                                onClose={() => this.setState({ ...this.state, optionModalVisible: false })}
+                                visible={this.state.optionModalVisible}
+                                onPlayPress={() => console.log("Playing Song")}
+                                onPlayListPress={() => console.log("Added to Playlist")}
                             />
                         </Screen>
                     )
