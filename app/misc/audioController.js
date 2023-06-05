@@ -22,8 +22,17 @@ export const resume = async (playbackObj) => {
     try {
         return await playbackObj.playAsync();
     } catch (error) {
-        console.log('Error Inside Resume helper Method');
+        console.log('Error Inside Resume helper Method', error.message);
     }
 }
 
 // select another audio
+export const playNext = async (playbackObj, uri) => {
+    try {
+        await playbackObj.stopAsync();
+        await playbackObj.unloadAsync();
+        return await play(playbackObj, uri);
+    } catch (error) {
+        console.log('Error Inside Play Next helper Method', error.message);
+    }
+}
