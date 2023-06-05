@@ -5,6 +5,8 @@ import { RecyclerListView, LayoutProvider } from 'recyclerlistview'
 import AudioListItem from '../components/AudioListItem'
 import Screen from '../components/Screen'
 import OptionModal from '../components/OptionModal'
+import { Audio } from 'expo-av';
+import { play, pause, resume } from '../misc/audioController'
 
 export class AudioList extends Component {
 
@@ -13,7 +15,7 @@ export class AudioList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            optionModalVisible: false
+            optionModalVisible: false,
         }
 
         this.currentItem = {}
@@ -33,11 +35,46 @@ export class AudioList extends Component {
 
     });
 
+    handleAudioPress = async (audio) => {
+
+        const { playbackObj, soundObj, currentAudio, updateState } = this.context;
+
+        // Playing Audio for first time
+        if (soundObj === null) {
+            const playbackObj = new Audio.Sound();
+            const status = await play(playbackObj, audio.uri)
+            return updateState(this.context, {
+                playbackObj: playbackObj,
+                soundObj: status,
+                currentAudio: audio
+            });
+
+        }
+
+        // Pause audio
+        if (soundObj.isLoaded && soundObj.isPlaying) {
+            const status = await pause(playbackObj);
+            return updateState(this.context, { soundObj: status });
+
+        }
+
+        // Resume Audio
+        if (
+            soundObj.isLoaded &&
+            !soundObj.isPlaying &&
+            currentAudio.id === audio.id
+        ) {
+            const status = await resume(playbackObj);
+            return updateState(this.context, { soundObj: status });
+        }
+    }
+
     rowRenderer = (type, item) => {
         return (
             <AudioListItem
                 title={item.filename}
                 duration={item.duration}
+                onAudioPress={() => this.handleAudioPress(item)}
                 onOptionPress={() => {
                     this.currentItem = item;
                     this.setState({ ...this.state, optionModalVisible: true });
